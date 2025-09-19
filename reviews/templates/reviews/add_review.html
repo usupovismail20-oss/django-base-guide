@@ -1,0 +1,245 @@
+{% extends "main/base.html" %}
+
+{% block title %}Добавить отзыв{% endblock %}
+
+{% block extra_css %}
+<style>
+    .review-form-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+    }
+
+    .review-form-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        width: 100%;
+        max-width: 600px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .review-form-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+
+    .form-title {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+        font-size: 28px;
+        font-weight: 600;
+    }
+
+    .product-info {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-left: 4px solid #667eea;
+    }
+
+    .product-name {
+        font-size: 20px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .product-description {
+        color: #666;
+        line-height: 1.5;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .rating-group {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .rating-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 15px;
+        border: 2px solid #e1e5e9;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .rating-option:hover {
+        border-color: #667eea;
+        background: #f8f9ff;
+    }
+
+    .rating-option input[type="radio"] {
+        display: none;
+    }
+
+    .rating-option input[type="radio"]:checked+.rating-label {
+        color: #667eea;
+    }
+
+    .rating-option input[type="radio"]:checked {
+        border-color: #667eea;
+        background: #f8f9ff;
+    }
+
+    .rating-label {
+        font-size: 18px;
+        color: #ffc107;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .form-control {
+        border: 2px solid #e1e5e9;
+        border-radius: 10px;
+        padding: 12px 15px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        outline: none;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 15px;
+        justify-content: space-between;
+        margin-top: 30px;
+    }
+
+    .btn-back {
+        background: #6c757d;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        padding: 12px 25px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-back:hover {
+        background: #5a6268;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 10px;
+        color: white;
+        padding: 12px 30px;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 5px 0 0 0;
+    }
+
+    .errorlist li {
+        color: #e74c3c;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="review-form-container">
+    <div class="review-form-card">
+        <h2 class="form-title">
+            <i class="bi bi-star"></i> Добавить отзыв
+        </h2>
+
+        <div class="product-info">
+            <div class="product-name">{{ product.name }}</div>
+            <div class="product-description">{{ product.description|truncatewords:30 }}</div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">Оценка товара</label>
+                <div class="rating-group">
+                    {% for choice in form.rating %}
+                    <label class="rating-option">
+                        {{ choice.tag }}
+                        <span class="rating-label">{{ choice.choice_label }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                {{ form.rating.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}" class="form-label">Заголовок отзыва</label>
+                {{ form.title }}
+                {{ form.title.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.comment.id_for_label }}" class="form-label">Ваш отзыв</label>
+                {{ form.comment }}
+                {{ form.comment.errors }}
+            </div>
+
+            <div class="btn-group">
+                <a href="{% url 'main:product_detail' product.id product.slug %}" class="btn-back">
+                    <i class="bi bi-arrow-left"></i> Назад к товару
+                </a>
+                <button type="submit" class="btn-submit">
+                    <i class="bi bi-send"></i> Отправить отзыв
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

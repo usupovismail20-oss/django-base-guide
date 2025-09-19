@@ -1,56 +1,420 @@
 {% extends "main/base.html" %}
 
-{% block title %}{{ product.name }}{% endblock %}
+{% block title %}{{ product.name }} - TechShop{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 0;
+        margin-bottom: 50px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .product-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.1)" points="0,1000 1000,0 1000,1000"/></svg>');
+        background-size: cover;
+    }
+
+    .product-detail-card {
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .product-image-container {
+        position: relative;
+        overflow: hidden;
+        height: 500px;
+    }
+
+    .product-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .product-image-container:hover img {
+        transform: scale(1.05);
+    }
+
+    .product-info {
+        padding: 40px;
+    }
+
+    .product-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #2d3748;
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+
+    .product-price {
+        font-size: 3rem;
+        font-weight: 900;
+        color: #48bb78;
+        margin-bottom: 30px;
+        text-shadow: 0 2px 4px rgba(72, 187, 120, 0.2);
+    }
+
+    .product-category {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 30px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .product-category:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        color: white;
+    }
+
+    .product-description {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #4a5568;
+        margin-bottom: 40px;
+        background: #f8f9ff;
+        padding: 30px;
+        border-radius: 20px;
+        border-left: 5px solid #667eea;
+    }
+
+    .add-to-cart-section {
+        background: linear-gradient(135deg, #f8f9ff 0%, #e6f3ff 100%);
+        padding: 30px;
+        border-radius: 20px;
+        border: 2px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .quantity-input {
+        border: 2px solid #e2e8f0;
+        border-radius: 15px;
+        padding: 15px 20px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-align: center;
+        width: 120px;
+        transition: all 0.3s ease;
+    }
+
+    .quantity-input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        outline: none;
+    }
+
+    .btn-add-cart {
+        background: linear-gradient(135deg, #48bb78, #38a169);
+        border: none;
+        color: white;
+        padding: 15px 40px;
+        border-radius: 25px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-add-cart:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(72, 187, 120, 0.4);
+        color: white;
+    }
+
+    .reviews-section {
+        background: white;
+        border-radius: 25px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-top: 30px;
+    }
+
+    .review-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(102, 126, 234, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .review-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.15);
+    }
+
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .review-user {
+        font-weight: 700;
+        color: #2d3748;
+        font-size: 1.1rem;
+    }
+
+    .review-date {
+        color: #718096;
+        font-size: 0.9rem;
+        background: rgba(102, 126, 234, 0.1);
+        padding: 5px 15px;
+        border-radius: 15px;
+    }
+
+    .review-rating {
+        color: #ffc107;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        text-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+    }
+
+    .review-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 15px;
+    }
+
+    .review-comment {
+        color: #4a5568;
+        line-height: 1.7;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.7);
+        padding: 20px;
+        border-radius: 15px;
+        border-left: 4px solid #667eea;
+    }
+
+    .related-products {
+        margin-top: 50px;
+    }
+
+    .related-product-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .related-product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .related-product-image {
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .related-product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .related-product-card:hover .related-product-image img {
+        transform: scale(1.1);
+    }
+
+    .related-product-content {
+        padding: 20px;
+    }
+
+    .related-product-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 10px;
+    }
+
+    .related-product-price {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #48bb78;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-    <div class="product-detail">
-        <div class="row">
-            <div class="col-md-6">
-                <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
+<!-- Product Hero Section -->
+<div class="product-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">{{ product.name }}</h1>
+                <p class="lead mb-0">Качественный товар по доступной цене</p>
             </div>
-            <div class="col-md-6">
-                <h1>{{ product.name }}</h1>
-                <p class="price h4 text-danger">{{ product.price }} руб.</p>
-                <p class="text-muted">Категория: 
-                    <a href="{{ product.category.get_absolute_url }}">
-                        {{ product.category.name }}
+            <div class="col-lg-4 text-lg-end">
+                <div class="h2 mb-0">{{ product.price }} ₽</div>
+                <small class="opacity-75">В наличии</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="product-detail-card">
+        <div class="row g-0">
+            <div class="col-lg-6">
+                <div class="product-image-container">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 bg-light">
+                        <i class="bi bi-image text-muted" style="font-size: 5rem;"></i>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="product-info">
+                    <a href="{{ product.category.get_absolute_url }}" class="product-category">
+                        <i class="bi bi-tag me-2"></i>{{ product.category.name }}
                     </a>
-                </p>
-                <div class="description mt-4">
-                    <h3>Описание</h3>
-                    <p>{{ product.description|linebreaks }}</p>
-                </div>
-                <div class="mt-4">
-                    <form action="{% url "cart:cart_add" product.id %}" method="post">
-                        {{ cart_product_form }}
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary btn-lg">Добавить в корзину</button>
-                    </form>
+
+                    <div class="product-description">
+                        <h4 class="mb-3"><i class="bi bi-info-circle me-2"></i>Описание</h4>
+                        {{ product.description|linebreaks }}
+                    </div>
+
+                    <div class="add-to-cart-section">
+                        <h5 class="mb-3"><i class="bi bi-cart-plus me-2"></i>Добавить в корзину</h5>
+                        <form action="{% url 'cart:cart_add' product.id %}" method="post"
+                            class="d-flex align-items-center gap-3">
+                            {% csrf_token %}
+                            <div class="d-flex align-items-center gap-2">
+                                <label for="id_quantity" class="form-label mb-0 fw-bold">Количество:</label>
+                                <input type="number" name="quantity" value="1" min="1" max="20" class="quantity-input"
+                                    id="id_quantity">
+                            </div>
+                            <input type="hidden" name="override" value="False">
+                            <button type="submit" class="btn btn-add-cart">
+                                <i class="bi bi-cart-plus me-2"></i>В корзину
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="reviews-section">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0">
+                <i class="bi bi-star-fill me-2 text-warning"></i>Отзывы покупателей
+            </h3>
+            <a href="{% url 'reviews:review_list' product.id %}" class="btn btn-outline-primary">
+                <i class="bi bi-chat-dots me-2"></i>Все отзывы
+            </a>
         </div>
 
-        {% if related_products %}
-        <div class="related-products mt-5">
-            <h2>Похожие товары</h2>
-            <div class="row">
-                {% for product in related_products %}
-                    <div class="col-md-3 mb-4">
-                        <div class="card h-100">
-                            <a href="{{ product.get_absolute_url }}">
-                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                            </a>
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
-                                </h5>
-                                <p class="card-text">{{ product.price }} руб.</p>
-                            </div>
-                        </div>
+        {% if product.reviews.all %}
+        {% with approved_reviews=product.reviews.all|slice:":4" %}
+        {% if approved_reviews %}
+        <div class="row">
+            {% for review in approved_reviews %}
+            {% if review.is_approved %}
+            <div class="col-lg-6 mb-4">
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="review-user">{{ review.user.username }}</div>
+                        <div class="review-date">{{ review.created|date:"d.m.Y" }}</div>
                     </div>
-                {% endfor %}
+
+                    <div class="review-rating">{{ review.get_stars }}</div>
+
+                    <div class="review-title">{{ review.title }}</div>
+                    <div class="review-comment">{{ review.comment|truncatewords:25 }}</div>
+                </div>
             </div>
+            {% endif %}
+            {% endfor %}
         </div>
         {% endif %}
+        {% endwith %}
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-chat-dots text-muted" style="font-size: 4rem;"></i>
+            <h4 class="mt-3 text-muted">Пока нет отзывов</h4>
+            <p class="text-muted">Станьте первым, кто оставит отзыв об этом товаре!</p>
+        </div>
+        {% endif %}
+
+        <div class="text-center mt-4">
+            {% if user.is_authenticated %}
+            <a href="{% url 'reviews:add_review' product.id %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-star me-2"></i>Оставить отзыв
+            </a>
+            {% else %}
+            <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-person me-2"></i>Войти, чтобы оставить отзыв
+            </a>
+            {% endif %}
+        </div>
     </div>
+</div>
+</div>
+
+{% if related_products %}
+<div class="related-products">
+    <h2 class="text-center mb-5">
+        <i class="bi bi-grid me-2"></i>Похожие товары
+    </h2>
+    <div class="row">
+        {% for product in related_products %}
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="related-product-card">
+                <a href="{{ product.get_absolute_url }}">
+                    <div class="related-product-image">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                        <div class="d-flex align-items-center justify-content-center h-100 bg-light">
+                            <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="related-product-content">
+                    <h5 class="related-product-title">
+                        <a href="{{ product.get_absolute_url }}" class="text-decoration-none">{{ product.name }}</a>
+                    </h5>
+                    <div class="related-product-price">{{ product.price }} ₽</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+</div>
 {% endblock %}

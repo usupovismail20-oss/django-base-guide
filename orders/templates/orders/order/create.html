@@ -1,0 +1,127 @@
+{% extends "main/base.html" %}
+
+{% block title %}Оформление заказа{% endblock %}
+
+{% block content %}
+<div class="order-create">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary">
+            <i class="bi bi-cart-check"></i> Оформление заказа
+        </h1>
+        <p class="lead text-muted">Заполните данные для доставки вашего заказа</p>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-truck"></i> Данные для доставки
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label fw-bold">
+                                    <i class="bi bi-person"></i> {{ form.first_name.label }}
+                                </label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                <div class="text-danger mt-1">{{ form.first_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label fw-bold">
+                                    <i class="bi bi-person-badge"></i> {{ form.last_name.label }}
+                                </label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                <div class="text-danger mt-1">{{ form.last_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="{{ form.email.id_for_label }}" class="form-label fw-bold">
+                                <i class="bi bi-envelope"></i> {{ form.email.label }}
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                            <div class="text-danger mt-1">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-4">
+                            <label for="{{ form.address.id_for_label }}" class="form-label fw-bold">
+                                <i class="bi bi-geo-alt"></i> {{ form.address.label }}
+                            </label>
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                            <div class="text-danger mt-1">{{ form.address.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="{{ form.postal_code.id_for_label }}" class="form-label fw-bold">
+                                    <i class="bi bi-mailbox"></i> {{ form.postal_code.label }}
+                                </label>
+                                {{ form.postal_code }}
+                                {% if form.postal_code.errors %}
+                                <div class="text-danger mt-1">{{ form.postal_code.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="{{ form.city.id_for_label }}" class="form-label fw-bold">
+                                    <i class="bi bi-building"></i> {{ form.city.label }}
+                                </label>
+                                {{ form.city }}
+                                {% if form.city.errors %}
+                                <div class="text-danger mt-1">{{ form.city.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-success btn-lg px-5 py-3">
+                                <i class="bi bi-credit-card"></i> Оформить заказ
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-lg border-0 sticky-top" style="top: 20px;">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-bag-check"></i> Ваш заказ
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    {% for item in cart %}
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 fw-bold">{{ item.product.name }}</h6>
+                            <small class="text-muted">
+                                <i class="bi bi-hash"></i> {{ item.quantity }} шт. ×
+                                <i class="bi bi-currency-dollar"></i> {{ item.price }} руб.
+                            </small>
+                        </div>
+                        <div class="text-end">
+                            <span class="fw-bold text-success fs-5">{{ item.total_price }} руб.</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-between align-items-center p-3 bg-primary text-white rounded">
+                        <h4 class="mb-0">
+                            <i class="bi bi-calculator"></i> Итого:
+                        </h4>
+                        <h4 class="mb-0 fw-bold">{{ cart.get_total_price }} руб.</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
